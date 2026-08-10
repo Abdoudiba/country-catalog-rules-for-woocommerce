@@ -82,8 +82,8 @@ confirmed the admin UI end-to-end — category fields, product override tab,
 settings tab all render, save, and persist correctly — and confirmed the
 core hide/preview/banner mechanics work correctly for a product directly
 assigned to a restricted category. It also surfaced two real bugs, both
-fixed below (not yet re-verified against a live site — next test pass should
-target these two specifically):
+fixed in 0.1.1 and confirmed fixed on a second real-install pass on
+`test.yuupee.com`:
 
 - **Category rules didn't cascade to subcategories.** Restricting a parent
   category (e.g. "Informatiques") had no effect on a product only assigned
@@ -94,7 +94,10 @@ target these two specifically):
   each assigned term's ancestor chain (nearest ancestor first) when none of
   the product's own categories has a rule — a direct assignment still wins
   over an inherited one, same "most specific wins" precedent as the existing
-  product-override-beats-category rule.
+  product-override-beats-category rule. **Verified fixed**: restricting a
+  parent category to US-only correctly 404'd a product assigned only to its
+  child category, and the same product became visible again under an
+  allowed-country preview.
 - **Real (non-preview) visits always resolved to the store's own base
   country**, regardless of actual visitor location — proven with an A/B test
   switching a category between "US only" and "SN only" and observing a real
@@ -109,7 +112,11 @@ target these two specifically):
   what the plugin's own docs already promised. If geolocation is still wrong
   after this fix, see "Geolocation troubleshooting" below — the remaining
   causes (MaxMind license key, reverse-proxy IP forwarding) are WooCommerce/
-  server-level, not this plugin.
+  server-level, not this plugin. **Verified fixed**: confirmed real browsing
+  IP resolved as United States (independently checked via ifconfig.co), then
+  a Senegal-only category rule correctly 404'd a normal (no preview param)
+  visit, and a US-only rule made it visible — no banner shown either time,
+  confirming this was genuine geolocation and not the preview override.
 
 ## Known limitations / v1 scope boundaries
 
