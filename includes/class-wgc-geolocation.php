@@ -28,16 +28,15 @@ class WGC_Geolocation {
 			return '';
 		}
 
-		// Prefer an explicit shipping/billing country if the customer already
-		// set one this session (e.g. mid-checkout) — geolocation is a fallback
-		// signal, not a source of truth once the customer has told us directly.
-		if ( function_exists( 'WC' ) && WC()->customer ) {
-			$explicit = WC()->customer->get_shipping_country();
-			if ( $explicit ) {
-				return $explicit;
-			}
-		}
-
+		// Call WC_Geolocation::geolocate_ip() directly rather than reading
+		// WC()->customer->get_shipping_country(): the latter is seeded from
+		// WooCommerce's "Default customer location" setting, which on most
+		// stores is "Shop base address" — a fresh WC_Customer with no session
+		// then always reports the store's own base country, never the
+		// visitor's. That silently defeats geolocation-based restriction
+		// entirely (every undetected visitor reads as the shop's own
+		// country instead of "unknown"). geolocate_ip() is the one call that
+		// unconditionally reflects the actual IP lookup.
 		$location = WC_Geolocation::geolocate_ip();
 		return isset( $location['country'] ) ? $location['country'] : '';
 	}

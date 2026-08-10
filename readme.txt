@@ -6,7 +6,7 @@ Tested up to: 6.7
 Requires PHP: 7.4
 WC requires at least: 8.0
 WC tested up to: 9.0
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -45,9 +45,12 @@ truth about where a visitor is.
 
 = Does this replace WooCommerce's own geolocation setting? =
 
-No — it reads from it. Make sure WooCommerce's default customer location is
-set to "Geolocate" (WooCommerce → Settings → General) for this plugin to
-have a country to check against.
+No — it calls WooCommerce's own `WC_Geolocation::geolocate_ip()` directly.
+Make sure a MaxMind license key is configured (WooCommerce → Settings →
+Integration → MaxMind Geolocation) so that lookup can actually resolve a
+country. If your store is behind Cloudflare or another reverse proxy, the
+origin also needs to see the real visitor IP — see the project README's
+"Geolocation troubleshooting" section.
 
 = What happens if a visitor's country can't be detected? =
 
@@ -60,6 +63,14 @@ integration point, but hasn't been verified against every third-party feed
 plugin. See the project README for the full list of known v1 limitations.
 
 == Changelog ==
+
+= 0.1.1 =
+* Fix: category rules now cascade to subcategories (a restriction on a
+  parent category applies to products only assigned to a child category).
+* Fix: real (non-preview) visitor geolocation no longer defaults to the
+  store's own base country — now calls WC_Geolocation::geolocate_ip()
+  directly instead of a shortcut that was seeded from the store's default
+  customer location setting.
 
 = 0.1.0 =
 * Initial release: category and product-level country restriction, two

@@ -3,8 +3,10 @@ defined( 'ABSPATH' ) || exit;
 
 /**
  * Resolves the effective country-restriction rule for a product: an explicit
- * product-level rule always wins; otherwise the first restricting category
- * (in the product's assigned categories) applies; otherwise there's no
+ * product-level rule always wins; otherwise a rule on one of the product's
+ * own assigned categories applies; otherwise a rule inherited from an
+ * ancestor category applies (nearest ancestor first), so restricting a
+ * parent category also covers its subcategories; otherwise there's no
  * restriction at all (visible everywhere — the safe default, so installing
  * the plugin never silently hides products nobody configured).
  */
@@ -46,6 +48,10 @@ class WGC_Rules {
 		}
 
 		$term_ids = wc_get_product_term_ids( $product_id, 'product_cat' );
+
+		// A category directly assigned to the product always wins over an
+		// inherited ancestor rule — most specific wins, same principle as
+		// the product-override-beats-category rule above.
 		foreach ( $term_ids as $term_id ) {
 			$countries = get_term_meta( $term_id, self::TERM_META_COUNTRIES, true );
 			if ( ! empty( $countries ) ) {
@@ -55,6 +61,25 @@ class WGC_Rules {
 					'mode'       => get_term_meta( $term_id, self::TERM_META_MODE, true ) ?: self::MODE_HIDE,
 					'source'     => 'category',
 				);
+			}
+		}
+
+		// Nothing directly assigned has a rule — a restriction on a parent
+		// category should still cover its subcategories (that's how a shop
+		// owner expects "restrict this category" to behave), so walk up each
+		// assigned term's ancestor chain, nearest ancestor first.
+		foreach ( $term_ids as $term_id ) {
+			$ancestor_ids = get_ancestors( $term_id, 'product_cat', 'taxonomy' );
+			foreach ( $ancestor_ids as $ancestor_id ) {
+				$countries = get_term_meta( $ancestor_id, self::TERM_META_COUNTRIES, true );
+				if ( ! empty( $countries ) ) {
+					return array(
+						'restricted' => true,
+						'countries'  => (array) $countries,
+						'mode'       => get_term_meta( $ancestor_id, self::TERM_META_MODE, true ) ?: self::MODE_HIDE,
+						'source'     => 'category-inherited',
+					);
+				}
 			}
 		}
 

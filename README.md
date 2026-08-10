@@ -61,7 +61,7 @@ nothing in the code assumes a specific country pair or store.
 woo-geo-catalog.php              Plugin bootstrap, WooCommerce dependency check, HPOS compat declaration
 includes/
   class-wgc-geolocation.php      Visitor country resolution (wraps WC_Geolocation) + admin preview override
-  class-wgc-rules.php            Resolves the effective rule for a product: product override > category > none
+  class-wgc-rules.php            Resolves the effective rule for a product: product override > product's own category > inherited from an ancestor category > none
   class-wgc-product-fields.php   Product Data panel UI (per-product override)
   class-wgc-category-fields.php  Category edit-screen UI (per-category rule)
   class-wgc-visibility.php       Enforcement: hooks into WooCommerce's visibility/purchasability filters
@@ -73,6 +73,43 @@ Data storage: plain post meta (`_wgc_countries`, `_wgc_mode`,
 `wgc_mode` on `product_cat` terms) — no custom database tables, so it's
 inspectable/editable directly if ever needed, and there's nothing extra to
 clean up on uninstall beyond standard meta.
+
+## Tested against a live install
+
+v1 (`0999064`) was built without a test WooCommerce site available. A first
+real-install pass on `test.yuupee.com` (browser-driven, not just `php -l`)
+confirmed the admin UI end-to-end — category fields, product override tab,
+settings tab all render, save, and persist correctly — and confirmed the
+core hide/preview/banner mechanics work correctly for a product directly
+assigned to a restricted category. It also surfaced two real bugs, both
+fixed below (not yet re-verified against a live site — next test pass should
+target these two specifically):
+
+- **Category rules didn't cascade to subcategories.** Restricting a parent
+  category (e.g. "Informatiques") had no effect on a product only assigned
+  to a child category (e.g. "Câbles / Adaptateurs") underneath it — the
+  opposite of what a shop owner setting a category-level rule would expect.
+  `WGC_Rules::resolve_for_product()` only checked the product's *own*
+  directly-assigned category terms, never their ancestors. Fixed by walking
+  each assigned term's ancestor chain (nearest ancestor first) when none of
+  the product's own categories has a rule — a direct assignment still wins
+  over an inherited one, same "most specific wins" precedent as the existing
+  product-override-beats-category rule.
+- **Real (non-preview) visits always resolved to the store's own base
+  country**, regardless of actual visitor location — proven with an A/B test
+  switching a category between "US only" and "SN only" and observing a real
+  US-located visit blocked in the first case and allowed in the second.
+  Root cause: `WGC_Geolocation::get_visitor_country()` checked
+  `WC()->customer->get_shipping_country()` before falling back to
+  `WC_Geolocation::geolocate_ip()`. For a fresh visitor with no session,
+  `get_shipping_country()` is seeded from WooCommerce's own "Default customer
+  location" setting — on most stores, "Shop base address" — which returns the
+  *shop's* country unconditionally, with no IP lookup involved at all. Fixed
+  by dropping that shortcut and calling `geolocate_ip()` directly, matching
+  what the plugin's own docs already promised. If geolocation is still wrong
+  after this fix, see "Geolocation troubleshooting" below — the remaining
+  causes (MaxMind license key, reverse-proxy IP forwarding) are WooCommerce/
+  server-level, not this plugin.
 
 ## Known limitations / v1 scope boundaries
 
@@ -96,6 +133,43 @@ future work (mine or a buyer's) doesn't have to rediscover them:
 - **Single-site tested only** so far — no multisite-specific handling.
 - **No REST API endpoints** for managing rules programmatically (e.g. from
   an external tool). Everything is admin-UI-driven in v1.
+- **Real-IP visibility behind a reverse proxy (Cloudflare or similar)**: this
+  plugin makes no attempt to detect or correct for a proxy rewriting the
+  visitor IP the origin server sees — it trusts whatever `WC_Geolocation`
+  resolves. If the store is proxied and the origin isn't configured to read
+  the proxy's forwarded-IP header (e.g. `CF-Connecting-IP` for Cloudflare),
+  WooCommerce's own IP detection sees the proxy's IP, not the visitor's, and
+  geolocation will be wrong regardless of this plugin. That's a server/
+  WooCommerce-level fix (see "Geolocation troubleshooting" below), deliberately
+  left out of this plugin's scope — silently rewriting sitewide IP detection
+  from inside a catalog-visibility plugin is a bigger, security-relevant
+  change (forwarded-IP headers are spoofable unless the origin firewall
+  actually restricts direct access to the proxy's IP ranges) that the site
+  owner should apply deliberately, not as a side effect of installing this.
+
+## Geolocation troubleshooting
+
+This plugin has no geolocation logic of its own — it calls
+`WC_Geolocation::geolocate_ip()` directly and uses whatever country that
+returns (see "Tested against a live install" below for why it calls this
+directly rather than reading `WC()->customer`). If restriction rules aren't
+matching real visitors correctly, the fault is almost always in what
+WooCommerce itself resolves, not in this plugin:
+
+- **MaxMind license key**: since WooCommerce 3.9, `WC_Geolocation` needs a
+  MaxMind license key (free tier is fine) configured under WooCommerce →
+  Settings → Integration → MaxMind Geolocation for the GeoIP database to
+  download and stay updated. Without it, geolocation accuracy degrades or
+  fails outright.
+- **Reverse proxy (Cloudflare, etc.)**: see the limitation above — the origin
+  needs to see the real visitor IP, not the proxy's. For Cloudflare
+  specifically, the usual fix is a small `woocommerce_geolocation_ip` filter
+  snippet (via a site-specific/must-use plugin, not this one) that prefers
+  `$_SERVER['HTTP_CF_CONNECTING_IP']` when present.
+- To confirm which of the two is at fault on a given store, use this plugin's
+  own `?wgc_preview_country=XX` admin preview to verify the *rule* is correct
+  independent of geolocation, then check what a real, undetected-country
+  visit actually resolves to.
 
 ## Ideas for later (not built, just captured)
 
