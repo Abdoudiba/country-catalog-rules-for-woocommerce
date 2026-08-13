@@ -96,7 +96,7 @@ class WGC_Visibility {
 			esc_html(
 				sprintf(
 					/* translators: %s: two-letter country code */
-					__( 'Geo Catalog preview active — browsing as %s. Remove ?wgc_preview_country from the URL to stop.', 'woo-geo-catalog' ),
+					__( 'Geo Catalog preview active — browsing as %s. Remove ?wgc_preview_country from the URL to stop.', 'geo-catalog-for-woocommerce' ),
 					self::visitor_country()
 				)
 			)

@@ -58,7 +58,7 @@ nothing in the code assumes a specific country pair or store.
 ## Architecture
 
 ```
-woo-geo-catalog.php              Plugin bootstrap, WooCommerce dependency check, HPOS compat declaration
+geo-catalog-for-woocommerce.php              Plugin bootstrap, WooCommerce dependency check, HPOS compat declaration
 includes/
   class-wgc-geolocation.php      Visitor country resolution (wraps WC_Geolocation) + admin preview override
   class-wgc-rules.php            Resolves the effective rule for a product: product override > product's own category > inherited from an ancestor category > none

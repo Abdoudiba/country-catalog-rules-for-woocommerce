@@ -52,10 +52,12 @@ class WGC_Geolocation {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return '';
 		}
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only preview toggle, gated by the capability check above; never writes state (see class docblock).
 		if ( empty( $_GET[ self::PREVIEW_PARAM ] ) ) {
 			return '';
 		}
 		$code = strtoupper( sanitize_text_field( wp_unslash( $_GET[ self::PREVIEW_PARAM ] ) ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 		return preg_match( '/^[A-Z]{2}$/', $code ) ? $code : '';
 	}
 

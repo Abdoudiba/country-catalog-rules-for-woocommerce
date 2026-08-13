@@ -15,7 +15,7 @@ class WGC_Product_Fields {
 
 	public static function add_tab( $tabs ) {
 		$tabs['wgc'] = array(
-			'label'    => __( 'Geo Catalog', 'woo-geo-catalog' ),
+			'label'    => __( 'Geo Catalog', 'geo-catalog-for-woocommerce' ),
 			'target'   => 'wgc_product_data',
 			'class'    => array(),
 			'priority' => 80,
@@ -37,9 +37,9 @@ class WGC_Product_Fields {
 			<div class="options_group">
 				<p class="form-field">
 					<?php
-					esc_html_e( 'By default, this product inherits any country restriction set on its category.', 'woo-geo-catalog' );
+					esc_html_e( 'By default, this product inherits any country restriction set on its category.', 'geo-catalog-for-woocommerce' );
 					if ( 'category' === $rule['source'] ) {
-						echo ' ' . esc_html__( 'Currently restricted via category to:', 'woo-geo-catalog' ) . ' <code>' . esc_html( implode( ', ', $rule['countries'] ) ) . '</code>';
+						echo ' ' . esc_html__( 'Currently restricted via category to:', 'geo-catalog-for-woocommerce' ) . ' <code>' . esc_html( implode( ', ', $rule['countries'] ) ) . '</code>';
 					}
 					?>
 				</p>
@@ -48,14 +48,14 @@ class WGC_Product_Fields {
 					array(
 						'id'          => WGC_Rules::PRODUCT_META_OVERRIDE,
 						'value'       => 'yes' === $override ? 'yes' : 'no',
-						'label'       => __( 'Override category rule for this product', 'woo-geo-catalog' ),
-						'description' => __( 'Check this to set a country rule specific to this product, ignoring its category.', 'woo-geo-catalog' ),
+						'label'       => __( 'Override category rule for this product', 'geo-catalog-for-woocommerce' ),
+						'description' => __( 'Check this to set a country rule specific to this product, ignoring its category.', 'geo-catalog-for-woocommerce' ),
 					)
 				);
 				?>
 				<p class="form-field">
 					<label for="<?php echo esc_attr( WGC_Rules::PRODUCT_META_COUNTRIES ); ?>">
-						<?php esc_html_e( 'Visible only in these countries', 'woo-geo-catalog' ); ?>
+						<?php esc_html_e( 'Visible only in these countries', 'geo-catalog-for-woocommerce' ); ?>
 					</label>
 					<select
 						id="<?php echo esc_attr( WGC_Rules::PRODUCT_META_COUNTRIES ); ?>"
@@ -70,17 +70,17 @@ class WGC_Product_Fields {
 							</option>
 						<?php endforeach; ?>
 					</select>
-					<span class="description"><?php esc_html_e( 'Leave empty to remove any product-level restriction.', 'woo-geo-catalog' ); ?></span>
+					<span class="description"><?php esc_html_e( 'Leave empty to remove any product-level restriction.', 'geo-catalog-for-woocommerce' ); ?></span>
 				</p>
 				<?php
 				woocommerce_wp_select(
 					array(
 						'id'      => WGC_Rules::PRODUCT_META_MODE,
 						'value'   => $mode,
-						'label'   => __( 'Restriction mode', 'woo-geo-catalog' ),
+						'label'   => __( 'Restriction mode', 'geo-catalog-for-woocommerce' ),
 						'options' => array(
-							WGC_Rules::MODE_HIDE        => __( 'Hide completely (not in shop, search, or feeds)', 'woo-geo-catalog' ),
-							WGC_Rules::MODE_UNAVAILABLE => __( 'Show, but mark as unavailable (no add-to-cart)', 'woo-geo-catalog' ),
+							WGC_Rules::MODE_HIDE        => __( 'Hide completely (not in shop, search, or feeds)', 'geo-catalog-for-woocommerce' ),
+							WGC_Rules::MODE_UNAVAILABLE => __( 'Show, but mark as unavailable (no add-to-cart)', 'geo-catalog-for-woocommerce' ),
 						),
 					)
 				);
@@ -91,6 +91,13 @@ class WGC_Product_Fields {
 	}
 
 	public static function save( $product_id ) {
+		// WooCommerce always renders its own woocommerce_meta_nonce field on the
+		// product edit screen and verifies it (in WC_Meta_Box_Product_Data::save())
+		// before this hook ever fires — but check it explicitly too, both as
+		// defense-in-depth and because static analysis can't see that upstream
+		// protection.
+		check_admin_referer( 'woocommerce_save_data', 'woocommerce_meta_nonce' );
+
 		$override = isset( $_POST[ WGC_Rules::PRODUCT_META_OVERRIDE ] ) ? 'yes' : 'no';
 		update_post_meta( $product_id, WGC_Rules::PRODUCT_META_OVERRIDE, $override );
 

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name:       Geo Catalog for WooCommerce
- * Plugin URI:         https://github.com/abid/woo-geo-catalog
+ * Plugin URI:         https://github.com/Abdoudiba/geo-catalog-for-woocommerce
  * Description:        Restrict product and category visibility by customer country, reusing WooCommerce's built-in MaxMind GeoIP detection instead of a separate geolocation service.
  * Version:            0.1.1
  * Requires at least:  6.0
@@ -10,8 +10,7 @@
  * Author:             Abid
  * License:            GPL v2 or later
  * License URI:        https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:        woo-geo-catalog
- * Domain Path:        /languages
+ * Text Domain:        geo-catalog-for-woocommerce
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -27,7 +26,7 @@ define( 'WGC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
  */
 function wgc_woocommerce_missing_notice() {
 	echo '<div class="notice notice-error"><p>' .
-		esc_html__( 'Geo Catalog for WooCommerce requires WooCommerce to be installed and active.', 'woo-geo-catalog' ) .
+		esc_html__( 'Geo Catalog for WooCommerce requires WooCommerce to be installed and active.', 'geo-catalog-for-woocommerce' ) .
 		'</p></div>';
 }
 
