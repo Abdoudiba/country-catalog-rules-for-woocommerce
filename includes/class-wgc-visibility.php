@@ -4,7 +4,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Enforces the resolved country rule against the current visitor: hides
  * restricted products from loops/search/direct access ("hide" mode), or
- * shows them but blocks purchase with a message ("unavailable" mode).
+ * shows them everywhere — grid cards included — but blocks purchase with an
+ * Amazon-style "not available for shipping to your country" notice
+ * ("unavailable" mode).
  */
 class WGC_Visibility {
 
@@ -13,11 +15,28 @@ class WGC_Visibility {
 		add_filter( 'woocommerce_is_purchasable', array( __CLASS__, 'filter_is_purchasable' ), 10, 2 );
 		add_action( 'template_redirect', array( __CLASS__, 'block_direct_access_when_hidden' ) );
 		add_action( 'woocommerce_single_product_summary', array( __CLASS__, 'render_unavailable_notice' ), 25 );
+		add_action( 'woocommerce_before_shop_loop_item_title', array( __CLASS__, 'render_loop_badge' ), 15 );
+		add_filter( 'woocommerce_loop_add_to_cart_link', array( __CLASS__, 'filter_loop_add_to_cart_link' ), 10, 2 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue_frontend_assets' ) );
 		add_action( 'wp_footer', array( __CLASS__, 'render_admin_preview_banner' ) );
 	}
 
 	private static function visitor_country() {
 		return WGC_Geolocation::get_visitor_country();
+	}
+
+	/**
+	 * Single source of truth for "is this product blocked from purchase for
+	 * the current visitor, in unavailable mode" — used by the purchasability
+	 * filter, the single-product notice, the loop badge, and the loop
+	 * add-to-cart swap, so all four always agree.
+	 */
+	private static function is_blocked_for_visitor( $product_id ) {
+		$rule = WGC_Rules::resolve_for_product( $product_id );
+		if ( ! $rule['restricted'] || WGC_Rules::MODE_UNAVAILABLE !== $rule['mode'] ) {
+			return false;
+		}
+		return ! WGC_Rules::is_visible_to_country( $product_id, self::visitor_country() );
 	}
 
 	public static function filter_is_visible( $visible, $product_id ) {
@@ -35,11 +54,7 @@ class WGC_Visibility {
 		if ( ! $purchasable ) {
 			return $purchasable;
 		}
-		$rule = WGC_Rules::resolve_for_product( $product->get_id() );
-		if ( ! $rule['restricted'] || WGC_Rules::MODE_UNAVAILABLE !== $rule['mode'] ) {
-			return $purchasable;
-		}
-		return WGC_Rules::is_visible_to_country( $product->get_id(), self::visitor_country() );
+		return ! self::is_blocked_for_visitor( $product->get_id() );
 	}
 
 	/**
@@ -68,18 +83,44 @@ class WGC_Visibility {
 
 	public static function render_unavailable_notice() {
 		global $product;
-		if ( ! $product instanceof WC_Product ) {
+		if ( ! $product instanceof WC_Product || ! self::is_blocked_for_visitor( $product->get_id() ) ) {
 			return;
 		}
-		$rule = WGC_Rules::resolve_for_product( $product->get_id() );
-		if ( ! $rule['restricted'] || WGC_Rules::MODE_UNAVAILABLE !== $rule['mode'] ) {
+		$message = WGC_Settings::get_unavailable_message( self::visitor_country() );
+		echo '<p class="wgc-unavailable-notice">' . esc_html( $message ) . '</p>';
+	}
+
+	/**
+	 * Amazon-style flag on shop/category/search grid cards, mirroring
+	 * WooCommerce's own "Sale!" flash badge placement — so a blocked product
+	 * is obvious before a shopper ever clicks through to its page.
+	 */
+	public static function render_loop_badge() {
+		global $product;
+		if ( ! $product instanceof WC_Product || ! self::is_blocked_for_visitor( $product->get_id() ) ) {
 			return;
 		}
-		if ( WGC_Rules::is_visible_to_country( $product->get_id(), self::visitor_country() ) ) {
+		echo '<span class="wgc-loop-badge">' . esc_html__( 'Not available in your country', 'geo-catalog-for-woocommerce' ) . '</span>';
+	}
+
+	/**
+	 * Swaps the grid card's Add to Cart button for a disabled-looking notice
+	 * when the product is blocked — without this, is_purchasable() being
+	 * false doesn't reliably change a simple product's loop button on its
+	 * own, so shoppers could click "Add to cart" only to be rejected.
+	 */
+	public static function filter_loop_add_to_cart_link( $html, $product ) {
+		if ( ! self::is_blocked_for_visitor( $product->get_id() ) ) {
+			return $html;
+		}
+		return '<span class="wgc-loop-unavailable-cta">' . esc_html__( 'Not available', 'geo-catalog-for-woocommerce' ) . '</span>';
+	}
+
+	public static function enqueue_frontend_assets() {
+		if ( ! is_shop() && ! is_product_category() && ! is_product_tag() && ! is_product() && ! is_search() ) {
 			return;
 		}
-		$message = WGC_Settings::get_unavailable_message();
-		echo '<p class="wgc-unavailable-notice" style="color:#a00;">' . esc_html( $message ) . '</p>';
+		wp_enqueue_style( 'wgc-frontend', WGC_PLUGIN_URL . 'assets/css/wgc-frontend.css', array(), WGC_VERSION );
 	}
 
 	/**

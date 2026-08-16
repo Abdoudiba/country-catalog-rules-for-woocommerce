@@ -1,0 +1,31 @@
+.wgc-loop-badge {
+	display: inline-block;
+	margin: 0 0 0.5em;
+	padding: 0.2em 0.6em;
+	font-size: 0.75em;
+	font-weight: 600;
+	line-height: 1.4;
+	color: #8a4b00;
+	background: #fff3e0;
+	border: 1px solid #f0c68a;
+	border-radius: 3px;
+}
+
+.wgc-loop-unavailable-cta {
+	display: inline-block;
+	padding: 0.5em 1em;
+	font-size: 0.9em;
+	color: #767676;
+	background: #f2f2f2;
+	border-radius: 3px;
+	cursor: default;
+}
+
+.wgc-unavailable-notice {
+	padding: 0.75em 1em;
+	margin: 1em 0;
+	color: #8a4b00;
+	background: #fff3e0;
+	border: 1px solid #f0c68a;
+	border-radius: 3px;
+}

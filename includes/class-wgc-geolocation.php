@@ -64,4 +64,18 @@ class WGC_Geolocation {
 	public static function is_previewing() {
 		return (bool) self::get_admin_preview_country();
 	}
+
+	/**
+	 * Localized country name for a two-letter code, for messaging like
+	 * "not available for shipping to Nigeria" — falls back to the raw code
+	 * if WooCommerce doesn't recognize it (shouldn't normally happen, since
+	 * codes only ever come from WC's own country list or GeoIP lookup).
+	 */
+	public static function get_country_name( $country_code ) {
+		if ( '' === $country_code || ! class_exists( 'WC_Countries' ) ) {
+			return $country_code;
+		}
+		$countries = WC()->countries->get_countries();
+		return isset( $countries[ $country_code ] ) ? $countries[ $country_code ] : $country_code;
+	}
 }

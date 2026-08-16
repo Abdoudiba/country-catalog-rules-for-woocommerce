@@ -6,7 +6,7 @@ Tested up to: 7.0
 Requires PHP: 7.4
 WC requires at least: 8.0
 WC tested up to: 9.0
-Stable tag: 0.1.1
+Stable tag: 0.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,9 @@ truth about where a visitor is.
 
 * Restrict a whole product category to specific countries in one place.
 * Per-product override for exceptions to a category rule.
-* Two modes: hide completely, or show but block purchase with a custom message.
+* Two modes: hide completely, or show everywhere — including shop/category
+  grid cards — with an Amazon-style "not available in your country" badge
+  and a custom message that can include the visitor's detected country name.
 * Admin preview mode (`?wgc_preview_country=XX`) — test rules without a VPN.
 * Fails open on undetected location: never accidentally hides a product from
   a real customer because geolocation couldn't determine their country.
@@ -63,6 +65,16 @@ integration point, but hasn't been verified against every third-party feed
 plugin. See the project README for the full list of known v1 limitations.
 
 == Changelog ==
+
+= 0.2.0 =
+* Add: "Show, mark unavailable" mode now shows a badge on shop/category/
+  search grid cards too (previously only the single product page), with
+  the grid's Add to Cart button swapped for a "Not available" notice —
+  matches how Amazon flags region-blocked products in listings, not just
+  on the product page.
+* Add: the unavailable message (WooCommerce → Settings → Geo Catalog) now
+  supports a `{country}` token, replaced with the visitor's detected
+  country name.
 
 = 0.1.1 =
 * Fix: category rules now cascade to subcategories (a restriction on a

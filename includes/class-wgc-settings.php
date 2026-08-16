@@ -32,11 +32,11 @@ class WGC_Settings {
 			),
 			array(
 				'title'    => __( 'Unavailable message', 'geo-catalog-for-woocommerce' ),
-				'desc'     => __( 'Shown on the product page when a visitor is blocked from purchasing (mode: "Show, mark unavailable").', 'geo-catalog-for-woocommerce' ),
+				'desc'     => __( 'Shown on the product page and product grids when a visitor is blocked from purchasing (mode: "Show, mark unavailable"). Use {country} to insert the visitor\'s detected country name.', 'geo-catalog-for-woocommerce' ),
 				'id'       => self::OPTION_UNAVAILABLE_MESSAGE,
 				'type'     => 'textarea',
 				'css'      => 'width:400px; height:75px;',
-				'default'  => __( 'This product is not currently available in your country.', 'geo-catalog-for-woocommerce' ),
+				'default'  => __( 'This product cannot be shipped to {country}.', 'geo-catalog-for-woocommerce' ),
 			),
 			array(
 				'type' => 'sectionend',
@@ -53,7 +53,14 @@ class WGC_Settings {
 		woocommerce_update_options( self::fields() );
 	}
 
-	public static function get_unavailable_message() {
-		return get_option( self::OPTION_UNAVAILABLE_MESSAGE ) ?: __( 'This product is not currently available in your country.', 'geo-catalog-for-woocommerce' );
+	/**
+	 * @param string $country_code Two-letter country code the message is
+	 *                              being shown for; substituted into any
+	 *                              {country} token in the template.
+	 */
+	public static function get_unavailable_message( $country_code = '' ) {
+		$template = get_option( self::OPTION_UNAVAILABLE_MESSAGE ) ?: __( 'This product cannot be shipped to {country}.', 'geo-catalog-for-woocommerce' );
+		$country_name = WGC_Geolocation::get_country_name( $country_code );
+		return str_replace( '{country}', $country_name, $template );
 	}
 }

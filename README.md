@@ -29,9 +29,12 @@ nothing in the code assumes a specific country pair or store.
   - *Hide completely* — not in the shop, search, related-product widgets, or
     (via a direct-URL check, not just the standard visibility filter) even a
     direct link to the product page.
-  - *Show, mark unavailable* — the product stays visible and indexable, but
-    the add-to-cart button is disabled and a configurable message shown
-    instead.
+  - *Show, mark unavailable* — the product stays visible and indexable
+    everywhere, including shop/category/search grid cards (Amazon-style: a
+    "Not available in your country" badge on the card, add-to-cart swapped
+    for a disabled-looking notice), and the add-to-cart button on the
+    product page is disabled with a configurable message — supports a
+    `{country}` token, substituted with the visitor's detected country name.
 - **Admin preview**: `?wgc_preview_country=CI` on any storefront URL lets a
   logged-in shop manager preview the site as a visitor from that country,
   without a VPN. Query-param only, never written to a cookie/session, so it's
@@ -64,8 +67,9 @@ includes/
   class-wgc-rules.php            Resolves the effective rule for a product: product override > product's own category > inherited from an ancestor category > none
   class-wgc-product-fields.php   Product Data panel UI (per-product override)
   class-wgc-category-fields.php  Category edit-screen UI (per-category rule)
-  class-wgc-visibility.php       Enforcement: hooks into WooCommerce's visibility/purchasability filters
+  class-wgc-visibility.php       Enforcement: hooks into WooCommerce's visibility/purchasability filters, renders the loop badge and product-page notice
   class-wgc-settings.php         WooCommerce → Settings → Geo Catalog tab (shared settings, e.g. message text)
+assets/css/wgc-frontend.css      Loop badge / unavailable-notice styling, enqueued only on shop/category/search/product pages
 ```
 
 Data storage: plain post meta (`_wgc_countries`, `_wgc_mode`,
