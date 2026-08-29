@@ -10,14 +10,14 @@ defined( 'ABSPATH' ) || exit;
  * restriction at all (visible everywhere — the safe default, so installing
  * the plugin never silently hides products nobody configured).
  */
-class WGC_Rules {
+class CCRW_Rules {
 
-	const PRODUCT_META_COUNTRIES = '_wgc_countries';
-	const PRODUCT_META_MODE      = '_wgc_mode';
-	const PRODUCT_META_OVERRIDE  = '_wgc_override_category';
+	const PRODUCT_META_COUNTRIES = '_ccrw_countries';
+	const PRODUCT_META_MODE      = '_ccrw_mode';
+	const PRODUCT_META_OVERRIDE  = '_ccrw_override_category';
 
-	const TERM_META_COUNTRIES = 'wgc_countries';
-	const TERM_META_MODE      = 'wgc_mode';
+	const TERM_META_COUNTRIES = 'ccrw_countries';
+	const TERM_META_MODE      = 'ccrw_mode';
 
 	const MODE_HIDE        = 'hide';
 	const MODE_UNAVAILABLE = 'unavailable';

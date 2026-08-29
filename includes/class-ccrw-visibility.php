@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
  * Amazon-style "not available for shipping to your country" notice
  * ("unavailable" mode).
  */
-class WGC_Visibility {
+class CCRW_Visibility {
 
 	public static function init() {
 		add_filter( 'woocommerce_product_is_visible', array( __CLASS__, 'filter_is_visible' ), 10, 2 );
@@ -22,7 +22,7 @@ class WGC_Visibility {
 	}
 
 	private static function visitor_country() {
-		return WGC_Geolocation::get_visitor_country();
+		return CCRW_Geolocation::get_visitor_country();
 	}
 
 	/**
@@ -32,22 +32,22 @@ class WGC_Visibility {
 	 * add-to-cart swap, so all four always agree.
 	 */
 	private static function is_blocked_for_visitor( $product_id ) {
-		$rule = WGC_Rules::resolve_for_product( $product_id );
-		if ( ! $rule['restricted'] || WGC_Rules::MODE_UNAVAILABLE !== $rule['mode'] ) {
+		$rule = CCRW_Rules::resolve_for_product( $product_id );
+		if ( ! $rule['restricted'] || CCRW_Rules::MODE_UNAVAILABLE !== $rule['mode'] ) {
 			return false;
 		}
-		return ! WGC_Rules::is_visible_to_country( $product_id, self::visitor_country() );
+		return ! CCRW_Rules::is_visible_to_country( $product_id, self::visitor_country() );
 	}
 
 	public static function filter_is_visible( $visible, $product_id ) {
 		if ( ! $visible ) {
 			return $visible;
 		}
-		$rule = WGC_Rules::resolve_for_product( $product_id );
-		if ( ! $rule['restricted'] || WGC_Rules::MODE_HIDE !== $rule['mode'] ) {
+		$rule = CCRW_Rules::resolve_for_product( $product_id );
+		if ( ! $rule['restricted'] || CCRW_Rules::MODE_HIDE !== $rule['mode'] ) {
 			return $visible;
 		}
-		return WGC_Rules::is_visible_to_country( $product_id, self::visitor_country() );
+		return CCRW_Rules::is_visible_to_country( $product_id, self::visitor_country() );
 	}
 
 	public static function filter_is_purchasable( $purchasable, $product ) {
@@ -70,11 +70,11 @@ class WGC_Visibility {
 		if ( ! $post ) {
 			return;
 		}
-		$rule = WGC_Rules::resolve_for_product( $post->ID );
-		if ( ! $rule['restricted'] || WGC_Rules::MODE_HIDE !== $rule['mode'] ) {
+		$rule = CCRW_Rules::resolve_for_product( $post->ID );
+		if ( ! $rule['restricted'] || CCRW_Rules::MODE_HIDE !== $rule['mode'] ) {
 			return;
 		}
-		if ( ! WGC_Rules::is_visible_to_country( $post->ID, self::visitor_country() ) ) {
+		if ( ! CCRW_Rules::is_visible_to_country( $post->ID, self::visitor_country() ) ) {
 			global $wp_query;
 			$wp_query->set_404();
 			status_header( 404 );
@@ -86,8 +86,8 @@ class WGC_Visibility {
 		if ( ! $product instanceof WC_Product || ! self::is_blocked_for_visitor( $product->get_id() ) ) {
 			return;
 		}
-		$message = WGC_Settings::get_unavailable_message( self::visitor_country() );
-		echo '<p class="wgc-unavailable-notice">' . esc_html( $message ) . '</p>';
+		$message = CCRW_Settings::get_unavailable_message( self::visitor_country() );
+		echo '<p class="ccrw-unavailable-notice">' . esc_html( $message ) . '</p>';
 	}
 
 	/**
@@ -100,7 +100,7 @@ class WGC_Visibility {
 		if ( ! $product instanceof WC_Product || ! self::is_blocked_for_visitor( $product->get_id() ) ) {
 			return;
 		}
-		echo '<span class="wgc-loop-badge">' . esc_html__( 'Not available in your country', 'geo-catalog-for-woocommerce' ) . '</span>';
+		echo '<span class="ccrw-loop-badge">' . esc_html__( 'Not available in your country', 'country-catalog-rules-for-woocommerce' ) . '</span>';
 	}
 
 	/**
@@ -113,23 +113,23 @@ class WGC_Visibility {
 		if ( ! self::is_blocked_for_visitor( $product->get_id() ) ) {
 			return $html;
 		}
-		return '<span class="wgc-loop-unavailable-cta">' . esc_html__( 'Not available', 'geo-catalog-for-woocommerce' ) . '</span>';
+		return '<span class="ccrw-loop-unavailable-cta">' . esc_html__( 'Not available', 'country-catalog-rules-for-woocommerce' ) . '</span>';
 	}
 
 	public static function enqueue_frontend_assets() {
 		if ( ! is_shop() && ! is_product_category() && ! is_product_tag() && ! is_product() && ! is_search() ) {
 			return;
 		}
-		wp_enqueue_style( 'wgc-frontend', WGC_PLUGIN_URL . 'assets/css/wgc-frontend.css', array(), WGC_VERSION );
+		wp_enqueue_style( 'ccrw-frontend', CCRW_PLUGIN_URL . 'assets/css/ccrw-frontend.css', array(), CCRW_VERSION );
 	}
 
 	/**
-	 * Visible only to the admin using ?wgc_preview_country=XX, so it's obvious
+	 * Visible only to the admin using ?ccrw_preview_country=XX, so it's obvious
 	 * during testing that a restriction rule is active — real visitors never
 	 * see this.
 	 */
 	public static function render_admin_preview_banner() {
-		if ( ! WGC_Geolocation::is_previewing() ) {
+		if ( ! CCRW_Geolocation::is_previewing() ) {
 			return;
 		}
 		printf(
@@ -137,7 +137,7 @@ class WGC_Visibility {
 			esc_html(
 				sprintf(
 					/* translators: %s: two-letter country code */
-					__( 'Geo Catalog preview active — browsing as %s. Remove ?wgc_preview_country from the URL to stop.', 'geo-catalog-for-woocommerce' ),
+					__( 'Country Catalog Rules preview active — browsing as %s. Remove ?ccrw_preview_country from the URL to stop.', 'country-catalog-rules-for-woocommerce' ),
 					self::visitor_country()
 				)
 			)

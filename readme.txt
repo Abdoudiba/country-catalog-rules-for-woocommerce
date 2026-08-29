@@ -1,4 +1,4 @@
-=== Geo Catalog for WooCommerce ===
+=== Country Catalog Rules for WooCommerce ===
 Contributors: abdoudiba
 Tags: woocommerce, geolocation, country restriction, catalog visibility, multi-country
 Requires at least: 6.0
@@ -7,7 +7,7 @@ Requires PHP: 7.4
 Requires Plugins: woocommerce
 WC requires at least: 8.0
 WC tested up to: 10.0
-Stable tag: 0.2.1
+Stable tag: 0.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ geolocation. If your store already has WooCommerce's built-in geolocation
 active (the MaxMind GeoIP2 database WooCommerce ships with), a second,
 independent lookup can disagree with it near a border or behind a VPN.
 
-Geo Catalog reuses `WC_Geolocation` — the same detection WooCommerce already
+Country Catalog Rules reuses `WC_Geolocation` — the same detection WooCommerce already
 uses for shipping, tax, and currency — so there's only ever one source of
 truth about where a visitor is.
 
@@ -31,7 +31,7 @@ truth about where a visitor is.
 * Two modes: hide completely, or show everywhere — including shop/category
   grid cards — with an Amazon-style "not available in your country" badge
   and a custom message that can include the visitor's detected country name.
-* Admin preview mode (`?wgc_preview_country=XX`) — test rules without a VPN.
+* Admin preview mode (`?ccrw_preview_country=XX`) — test rules without a VPN.
 * Fails open on undetected location: never accidentally hides a product from
   a real customer because geolocation couldn't determine their country.
 
@@ -40,9 +40,9 @@ truth about where a visitor is.
 1. Upload to `/wp-content/plugins/` or install via Plugins → Add New → Upload.
 2. Activate.
 3. Set category rules under Products → Categories.
-4. Set per-product overrides under each product's Product Data → Geo Catalog tab.
+4. Set per-product overrides under each product's Product Data → Country Catalog Rules tab.
 5. Optional: customize the unavailable-product message under WooCommerce →
-   Settings → Geo Catalog.
+   Settings → Country Catalog Rules.
 
 == Frequently Asked Questions ==
 
@@ -67,6 +67,12 @@ plugin. See the project README for the full list of known v1 limitations.
 
 == Changelog ==
 
+= 0.3.0 =
+* Rename: the plugin is now "Country Catalog Rules for WooCommerce"
+  (was "Geo Catalog for WooCommerce"). Internal prefix, text domain,
+  option/meta keys and the admin-preview query parameter changed from
+  `wgc` to `ccrw`. First public release under the new name.
+
 = 0.2.1 =
 * Add: declare the `Requires Plugins: woocommerce` dependency header.
 * Compat: tested up to WordPress 7.1 and WooCommerce 10.0.
@@ -77,7 +83,7 @@ plugin. See the project README for the full list of known v1 limitations.
   the grid's Add to Cart button swapped for a "Not available" notice —
   matches how Amazon flags region-blocked products in listings, not just
   on the product page.
-* Add: the unavailable message (WooCommerce → Settings → Geo Catalog) now
+* Add: the unavailable message (WooCommerce → Settings → Country Catalog Rules) now
   supports a `{country}` token, replaced with the visitor's detected
   country name.
 

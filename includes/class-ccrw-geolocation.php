@@ -10,9 +10,9 @@ defined( 'ABSPATH' ) || exit;
  * disagreeing about a visitor's country, which is the main reliability risk
  * with plugins that bring their own IP database.
  */
-class WGC_Geolocation {
+class CCRW_Geolocation {
 
-	const PREVIEW_PARAM = 'wgc_preview_country';
+	const PREVIEW_PARAM = 'ccrw_preview_country';
 
 	/**
 	 * Resolve the current visitor's two-letter country code, or '' if it
@@ -43,7 +43,7 @@ class WGC_Geolocation {
 
 	/**
 	 * Lets a logged-in admin preview the storefront as if browsing from a
-	 * specific country, via ?wgc_preview_country=CI — avoids needing a VPN to
+	 * specific country, via ?ccrw_preview_country=CI — avoids needing a VPN to
 	 * test restriction rules. Admin-only and never persisted beyond the
 	 * request's query param (no cookie, no session write) to keep it obviously
 	 * inert for real visitors.

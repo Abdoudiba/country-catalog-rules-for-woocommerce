@@ -1,4 +1,4 @@
-# Geo Catalog for WooCommerce
+# Country Catalog Rules for WooCommerce
 
 Restrict which products (or entire categories) are visible or purchasable
 based on the visitor's country — without adding a second geolocation system
@@ -35,7 +35,7 @@ nothing in the code assumes a specific country pair or store.
     for a disabled-looking notice), and the add-to-cart button on the
     product page is disabled with a configurable message — supports a
     `{country}` token, substituted with the visitor's detected country name.
-- **Admin preview**: `?wgc_preview_country=CI` on any storefront URL lets a
+- **Admin preview**: `?ccrw_preview_country=CI` on any storefront URL lets a
   logged-in shop manager preview the site as a visitor from that country,
   without a VPN. Query-param only, never written to a cookie/session, so it's
   obviously inert for real visitors and leaves no persistent state to forget
@@ -54,27 +54,27 @@ nothing in the code assumes a specific country pair or store.
 4. Configure category rules under **Products → Categories** (edit any
    category — new fields appear at the bottom of the edit screen).
 5. Configure product-level overrides under **Products → [edit a product] →
-   Product data → Geo Catalog** tab.
-6. Optional: **WooCommerce → Settings → Geo Catalog** to customize the
+   Product data → Country Catalog Rules** tab.
+6. Optional: **WooCommerce → Settings → Country Catalog Rules** to customize the
    "unavailable" message shown on blocked products.
 
 ## Architecture
 
 ```
-geo-catalog-for-woocommerce.php              Plugin bootstrap, WooCommerce dependency check, HPOS compat declaration
+country-catalog-rules-for-woocommerce.php              Plugin bootstrap, WooCommerce dependency check, HPOS compat declaration
 includes/
-  class-wgc-geolocation.php      Visitor country resolution (wraps WC_Geolocation) + admin preview override
-  class-wgc-rules.php            Resolves the effective rule for a product: product override > product's own category > inherited from an ancestor category > none
-  class-wgc-product-fields.php   Product Data panel UI (per-product override)
-  class-wgc-category-fields.php  Category edit-screen UI (per-category rule)
-  class-wgc-visibility.php       Enforcement: hooks into WooCommerce's visibility/purchasability filters, renders the loop badge and product-page notice
-  class-wgc-settings.php         WooCommerce → Settings → Geo Catalog tab (shared settings, e.g. message text)
-assets/css/wgc-frontend.css      Loop badge / unavailable-notice styling, enqueued only on shop/category/search/product pages
+  class-ccrw-geolocation.php      Visitor country resolution (wraps WC_Geolocation) + admin preview override
+  class-ccrw-rules.php            Resolves the effective rule for a product: product override > product's own category > inherited from an ancestor category > none
+  class-ccrw-product-fields.php   Product Data panel UI (per-product override)
+  class-ccrw-category-fields.php  Category edit-screen UI (per-category rule)
+  class-ccrw-visibility.php       Enforcement: hooks into WooCommerce's visibility/purchasability filters, renders the loop badge and product-page notice
+  class-ccrw-settings.php         WooCommerce → Settings → Country Catalog Rules tab (shared settings, e.g. message text)
+assets/css/ccrw-frontend.css      Loop badge / unavailable-notice styling, enqueued only on shop/category/search/product pages
 ```
 
-Data storage: plain post meta (`_wgc_countries`, `_wgc_mode`,
-`_wgc_override_category` on products) and term meta (`wgc_countries`,
-`wgc_mode` on `product_cat` terms) — no custom database tables, so it's
+Data storage: plain post meta (`_ccrw_countries`, `_ccrw_mode`,
+`_ccrw_override_category` on products) and term meta (`ccrw_countries`,
+`ccrw_mode` on `product_cat` terms) — no custom database tables, so it's
 inspectable/editable directly if ever needed, and there's nothing extra to
 clean up on uninstall beyond standard meta.
 
@@ -93,7 +93,7 @@ fixed in 0.1.1 and confirmed fixed on a second real-install pass on
   category (e.g. "Informatiques") had no effect on a product only assigned
   to a child category (e.g. "Câbles / Adaptateurs") underneath it — the
   opposite of what a shop owner setting a category-level rule would expect.
-  `WGC_Rules::resolve_for_product()` only checked the product's *own*
+  `CCRW_Rules::resolve_for_product()` only checked the product's *own*
   directly-assigned category terms, never their ancestors. Fixed by walking
   each assigned term's ancestor chain (nearest ancestor first) when none of
   the product's own categories has a rule — a direct assignment still wins
@@ -106,7 +106,7 @@ fixed in 0.1.1 and confirmed fixed on a second real-install pass on
   country**, regardless of actual visitor location — proven with an A/B test
   switching a category between "US only" and "SN only" and observing a real
   US-located visit blocked in the first case and allowed in the second.
-  Root cause: `WGC_Geolocation::get_visitor_country()` checked
+  Root cause: `CCRW_Geolocation::get_visitor_country()` checked
   `WC()->customer->get_shipping_country()` before falling back to
   `WC_Geolocation::geolocate_ip()`. For a fresh visitor with no session,
   `get_shipping_country()` is seeded from WooCommerce's own "Default customer
@@ -178,7 +178,7 @@ WooCommerce itself resolves, not in this plugin:
   snippet (via a site-specific/must-use plugin, not this one) that prefers
   `$_SERVER['HTTP_CF_CONNECTING_IP']` when present.
 - To confirm which of the two is at fault on a given store, use this plugin's
-  own `?wgc_preview_country=XX` admin preview to verify the *rule* is correct
+  own `?ccrw_preview_country=XX` admin preview to verify the *rule* is correct
   independent of geolocation, then check what a real, undetected-country
   visit actually resolves to.
 
