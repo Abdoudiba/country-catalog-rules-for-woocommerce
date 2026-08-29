@@ -2,11 +2,12 @@
 Contributors: abdoudiba
 Tags: woocommerce, geolocation, country restriction, catalog visibility, multi-country
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
+Requires Plugins: woocommerce
 WC requires at least: 8.0
-WC tested up to: 9.0
-Stable tag: 0.2.0
+WC tested up to: 10.0
+Stable tag: 0.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +66,10 @@ integration point, but hasn't been verified against every third-party feed
 plugin. See the project README for the full list of known v1 limitations.
 
 == Changelog ==
+
+= 0.2.1 =
+* Add: declare the `Requires Plugins: woocommerce` dependency header.
+* Compat: tested up to WordPress 7.1 and WooCommerce 10.0.
 
 = 0.2.0 =
 * Add: "Show, mark unavailable" mode now shows a badge on shop/category/
