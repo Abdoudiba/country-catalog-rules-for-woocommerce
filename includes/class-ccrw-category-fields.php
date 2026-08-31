@@ -32,17 +32,17 @@ class CCRW_Category_Fields {
 	public static function render_add_fields() {
 		?>
 		<div class="form-field">
-			<label for="ccrw_countries"><?php esc_html_e( 'Visible only in these countries', 'country-catalog-rules-for-woocommerce' ); ?></label>
+			<label for="ccrw_countries"><?php esc_html_e( 'Visible only in these countries', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></label>
 			<select id="ccrw_countries" name="ccrw_countries[]" multiple="multiple" style="width:95%;" class="wc-enhanced-select">
 				<?php echo self::country_options( array() ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 			</select>
-			<p><?php esc_html_e( 'Leave empty for no restriction. Products in this category can still override this individually.', 'country-catalog-rules-for-woocommerce' ); ?></p>
+			<p><?php esc_html_e( 'Leave empty for no restriction. Products in this category can still override this individually.', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></p>
 		</div>
 		<div class="form-field">
-			<label for="ccrw_mode"><?php esc_html_e( 'Restriction mode', 'country-catalog-rules-for-woocommerce' ); ?></label>
+			<label for="ccrw_mode"><?php esc_html_e( 'Restriction mode', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></label>
 			<select id="ccrw_mode" name="ccrw_mode">
-				<option value="<?php echo esc_attr( CCRW_Rules::MODE_HIDE ); ?>"><?php esc_html_e( 'Hide completely', 'country-catalog-rules-for-woocommerce' ); ?></option>
-				<option value="<?php echo esc_attr( CCRW_Rules::MODE_UNAVAILABLE ); ?>"><?php esc_html_e( 'Show, mark unavailable', 'country-catalog-rules-for-woocommerce' ); ?></option>
+				<option value="<?php echo esc_attr( CCRW_Rules::MODE_HIDE ); ?>"><?php esc_html_e( 'Hide completely', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></option>
+				<option value="<?php echo esc_attr( CCRW_Rules::MODE_UNAVAILABLE ); ?>"><?php esc_html_e( 'Show, mark unavailable', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></option>
 			</select>
 		</div>
 		<?php
@@ -53,20 +53,20 @@ class CCRW_Category_Fields {
 		$mode      = get_term_meta( $term->term_id, CCRW_Rules::TERM_META_MODE, true ) ?: CCRW_Rules::MODE_HIDE;
 		?>
 		<tr class="form-field">
-			<th scope="row"><label for="ccrw_countries"><?php esc_html_e( 'Visible only in these countries', 'country-catalog-rules-for-woocommerce' ); ?></label></th>
+			<th scope="row"><label for="ccrw_countries"><?php esc_html_e( 'Visible only in these countries', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></label></th>
 			<td>
 				<select id="ccrw_countries" name="ccrw_countries[]" multiple="multiple" style="width:95%;" class="wc-enhanced-select">
 					<?php echo self::country_options( $countries ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 				</select>
-				<p class="description"><?php esc_html_e( 'Leave empty for no restriction. Products in this category can still override this individually.', 'country-catalog-rules-for-woocommerce' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Leave empty for no restriction. Products in this category can still override this individually.', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></p>
 			</td>
 		</tr>
 		<tr class="form-field">
-			<th scope="row"><label for="ccrw_mode"><?php esc_html_e( 'Restriction mode', 'country-catalog-rules-for-woocommerce' ); ?></label></th>
+			<th scope="row"><label for="ccrw_mode"><?php esc_html_e( 'Restriction mode', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></label></th>
 			<td>
 				<select id="ccrw_mode" name="ccrw_mode">
-					<option value="<?php echo esc_attr( CCRW_Rules::MODE_HIDE ); ?>" <?php selected( $mode, CCRW_Rules::MODE_HIDE ); ?>><?php esc_html_e( 'Hide completely', 'country-catalog-rules-for-woocommerce' ); ?></option>
-					<option value="<?php echo esc_attr( CCRW_Rules::MODE_UNAVAILABLE ); ?>" <?php selected( $mode, CCRW_Rules::MODE_UNAVAILABLE ); ?>><?php esc_html_e( 'Show, mark unavailable', 'country-catalog-rules-for-woocommerce' ); ?></option>
+					<option value="<?php echo esc_attr( CCRW_Rules::MODE_HIDE ); ?>" <?php selected( $mode, CCRW_Rules::MODE_HIDE ); ?>><?php esc_html_e( 'Hide completely', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></option>
+					<option value="<?php echo esc_attr( CCRW_Rules::MODE_UNAVAILABLE ); ?>" <?php selected( $mode, CCRW_Rules::MODE_UNAVAILABLE ); ?>><?php esc_html_e( 'Show, mark unavailable', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></option>
 				</select>
 			</td>
 		</tr>

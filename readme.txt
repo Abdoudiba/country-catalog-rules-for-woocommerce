@@ -1,4 +1,4 @@
-=== Country Catalog Rules for WooCommerce ===
+=== Yuupee Country Catalog Rules for WooCommerce ===
 Contributors: abdoudiba
 Tags: woocommerce, geolocation, country restriction, catalog visibility, multi-country
 Requires at least: 6.0
@@ -7,7 +7,7 @@ Requires PHP: 7.4
 Requires Plugins: woocommerce
 WC requires at least: 8.0
 WC tested up to: 10.0
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,7 +20,7 @@ geolocation. If your store already has WooCommerce's built-in geolocation
 active (the MaxMind GeoIP2 database WooCommerce ships with), a second,
 independent lookup can disagree with it near a border or behind a VPN.
 
-Country Catalog Rules reuses `WC_Geolocation` — the same detection WooCommerce already
+Yuupee Country Catalog Rules reuses `WC_Geolocation` — the same detection WooCommerce already
 uses for shipping, tax, and currency — so there's only ever one source of
 truth about where a visitor is.
 
@@ -66,6 +66,13 @@ integration point, but hasn't been verified against every third-party feed
 plugin. See the project README for the full list of known v1 limitations.
 
 == Changelog ==
+
+= 0.4.0 =
+* Rename: the plugin is now "Yuupee Country Catalog Rules for WooCommerce"
+  (was "Country Catalog Rules for WooCommerce") and the slug is
+  `yuupee-country-catalog-rules-for-woocommerce`. Text domain updated to
+  match. No functional changes; the `ccrw` internal prefix, option/meta
+  keys and the `?ccrw_preview_country` query parameter are unchanged.
 
 = 0.3.0 =
 * Rename: the plugin is now "Country Catalog Rules for WooCommerce"

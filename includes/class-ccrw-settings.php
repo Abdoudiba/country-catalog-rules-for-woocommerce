@@ -18,25 +18,25 @@ class CCRW_Settings {
 	}
 
 	public static function add_tab( $tabs ) {
-		$tabs['ccrw'] = __( 'Country Catalog Rules', 'country-catalog-rules-for-woocommerce' );
+		$tabs['ccrw'] = __( 'Country Catalog Rules', 'yuupee-country-catalog-rules-for-woocommerce' );
 		return $tabs;
 	}
 
 	private static function fields() {
 		return array(
 			array(
-				'title' => __( 'Country Catalog Rules', 'country-catalog-rules-for-woocommerce' ),
+				'title' => __( 'Country Catalog Rules', 'yuupee-country-catalog-rules-for-woocommerce' ),
 				'type'  => 'title',
-				'desc'  => __( 'Country restriction is configured per-product (Product Data → Country Catalog Rules tab) and per-category (Products → Categories → edit a category). This page only holds settings shared across all restricted products.', 'country-catalog-rules-for-woocommerce' ),
+				'desc'  => __( 'Country restriction is configured per-product (Product Data → Country Catalog Rules tab) and per-category (Products → Categories → edit a category). This page only holds settings shared across all restricted products.', 'yuupee-country-catalog-rules-for-woocommerce' ),
 				'id'    => 'ccrw_section_title',
 			),
 			array(
-				'title'    => __( 'Unavailable message', 'country-catalog-rules-for-woocommerce' ),
-				'desc'     => __( 'Shown on the product page and product grids when a visitor is blocked from purchasing (mode: "Show, mark unavailable"). Use {country} to insert the visitor\'s detected country name.', 'country-catalog-rules-for-woocommerce' ),
+				'title'    => __( 'Unavailable message', 'yuupee-country-catalog-rules-for-woocommerce' ),
+				'desc'     => __( 'Shown on the product page and product grids when a visitor is blocked from purchasing (mode: "Show, mark unavailable"). Use {country} to insert the visitor\'s detected country name.', 'yuupee-country-catalog-rules-for-woocommerce' ),
 				'id'       => self::OPTION_UNAVAILABLE_MESSAGE,
 				'type'     => 'textarea',
 				'css'      => 'width:400px; height:75px;',
-				'default'  => __( 'This product cannot be shipped to {country}.', 'country-catalog-rules-for-woocommerce' ),
+				'default'  => __( 'This product cannot be shipped to {country}.', 'yuupee-country-catalog-rules-for-woocommerce' ),
 			),
 			array(
 				'type' => 'sectionend',
@@ -59,7 +59,7 @@ class CCRW_Settings {
 	 *                              {country} token in the template.
 	 */
 	public static function get_unavailable_message( $country_code = '' ) {
-		$template = get_option( self::OPTION_UNAVAILABLE_MESSAGE ) ?: __( 'This product cannot be shipped to {country}.', 'country-catalog-rules-for-woocommerce' );
+		$template = get_option( self::OPTION_UNAVAILABLE_MESSAGE ) ?: __( 'This product cannot be shipped to {country}.', 'yuupee-country-catalog-rules-for-woocommerce' );
 		$country_name = CCRW_Geolocation::get_country_name( $country_code );
 		return str_replace( '{country}', $country_name, $template );
 	}

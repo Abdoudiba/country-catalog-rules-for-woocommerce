@@ -100,7 +100,7 @@ class CCRW_Visibility {
 		if ( ! $product instanceof WC_Product || ! self::is_blocked_for_visitor( $product->get_id() ) ) {
 			return;
 		}
-		echo '<span class="ccrw-loop-badge">' . esc_html__( 'Not available in your country', 'country-catalog-rules-for-woocommerce' ) . '</span>';
+		echo '<span class="ccrw-loop-badge">' . esc_html__( 'Not available in your country', 'yuupee-country-catalog-rules-for-woocommerce' ) . '</span>';
 	}
 
 	/**
@@ -113,7 +113,7 @@ class CCRW_Visibility {
 		if ( ! self::is_blocked_for_visitor( $product->get_id() ) ) {
 			return $html;
 		}
-		return '<span class="ccrw-loop-unavailable-cta">' . esc_html__( 'Not available', 'country-catalog-rules-for-woocommerce' ) . '</span>';
+		return '<span class="ccrw-loop-unavailable-cta">' . esc_html__( 'Not available', 'yuupee-country-catalog-rules-for-woocommerce' ) . '</span>';
 	}
 
 	public static function enqueue_frontend_assets() {
@@ -137,7 +137,7 @@ class CCRW_Visibility {
 			esc_html(
 				sprintf(
 					/* translators: %s: two-letter country code */
-					__( 'Country Catalog Rules preview active — browsing as %s. Remove ?ccrw_preview_country from the URL to stop.', 'country-catalog-rules-for-woocommerce' ),
+					__( 'Country Catalog Rules preview active — browsing as %s. Remove ?ccrw_preview_country from the URL to stop.', 'yuupee-country-catalog-rules-for-woocommerce' ),
 					self::visitor_country()
 				)
 			)

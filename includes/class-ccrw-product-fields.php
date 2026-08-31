@@ -15,7 +15,7 @@ class CCRW_Product_Fields {
 
 	public static function add_tab( $tabs ) {
 		$tabs['ccrw'] = array(
-			'label'    => __( 'Country Catalog Rules', 'country-catalog-rules-for-woocommerce' ),
+			'label'    => __( 'Country Catalog Rules', 'yuupee-country-catalog-rules-for-woocommerce' ),
 			'target'   => 'ccrw_product_data',
 			'class'    => array(),
 			'priority' => 80,
@@ -37,9 +37,9 @@ class CCRW_Product_Fields {
 			<div class="options_group">
 				<p class="form-field">
 					<?php
-					esc_html_e( 'By default, this product inherits any country restriction set on its category.', 'country-catalog-rules-for-woocommerce' );
+					esc_html_e( 'By default, this product inherits any country restriction set on its category.', 'yuupee-country-catalog-rules-for-woocommerce' );
 					if ( 'category' === $rule['source'] ) {
-						echo ' ' . esc_html__( 'Currently restricted via category to:', 'country-catalog-rules-for-woocommerce' ) . ' <code>' . esc_html( implode( ', ', $rule['countries'] ) ) . '</code>';
+						echo ' ' . esc_html__( 'Currently restricted via category to:', 'yuupee-country-catalog-rules-for-woocommerce' ) . ' <code>' . esc_html( implode( ', ', $rule['countries'] ) ) . '</code>';
 					}
 					?>
 				</p>
@@ -48,14 +48,14 @@ class CCRW_Product_Fields {
 					array(
 						'id'          => CCRW_Rules::PRODUCT_META_OVERRIDE,
 						'value'       => 'yes' === $override ? 'yes' : 'no',
-						'label'       => __( 'Override category rule for this product', 'country-catalog-rules-for-woocommerce' ),
-						'description' => __( 'Check this to set a country rule specific to this product, ignoring its category.', 'country-catalog-rules-for-woocommerce' ),
+						'label'       => __( 'Override category rule for this product', 'yuupee-country-catalog-rules-for-woocommerce' ),
+						'description' => __( 'Check this to set a country rule specific to this product, ignoring its category.', 'yuupee-country-catalog-rules-for-woocommerce' ),
 					)
 				);
 				?>
 				<p class="form-field">
 					<label for="<?php echo esc_attr( CCRW_Rules::PRODUCT_META_COUNTRIES ); ?>">
-						<?php esc_html_e( 'Visible only in these countries', 'country-catalog-rules-for-woocommerce' ); ?>
+						<?php esc_html_e( 'Visible only in these countries', 'yuupee-country-catalog-rules-for-woocommerce' ); ?>
 					</label>
 					<select
 						id="<?php echo esc_attr( CCRW_Rules::PRODUCT_META_COUNTRIES ); ?>"
@@ -70,17 +70,17 @@ class CCRW_Product_Fields {
 							</option>
 						<?php endforeach; ?>
 					</select>
-					<span class="description"><?php esc_html_e( 'Leave empty to remove any product-level restriction.', 'country-catalog-rules-for-woocommerce' ); ?></span>
+					<span class="description"><?php esc_html_e( 'Leave empty to remove any product-level restriction.', 'yuupee-country-catalog-rules-for-woocommerce' ); ?></span>
 				</p>
 				<?php
 				woocommerce_wp_select(
 					array(
 						'id'      => CCRW_Rules::PRODUCT_META_MODE,
 						'value'   => $mode,
-						'label'   => __( 'Restriction mode', 'country-catalog-rules-for-woocommerce' ),
+						'label'   => __( 'Restriction mode', 'yuupee-country-catalog-rules-for-woocommerce' ),
 						'options' => array(
-							CCRW_Rules::MODE_HIDE        => __( 'Hide completely (not in shop, search, or feeds)', 'country-catalog-rules-for-woocommerce' ),
-							CCRW_Rules::MODE_UNAVAILABLE => __( 'Show, but mark as unavailable (no add-to-cart)', 'country-catalog-rules-for-woocommerce' ),
+							CCRW_Rules::MODE_HIDE        => __( 'Hide completely (not in shop, search, or feeds)', 'yuupee-country-catalog-rules-for-woocommerce' ),
+							CCRW_Rules::MODE_UNAVAILABLE => __( 'Show, but mark as unavailable (no add-to-cart)', 'yuupee-country-catalog-rules-for-woocommerce' ),
 						),
 					)
 				);

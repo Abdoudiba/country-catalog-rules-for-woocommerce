@@ -1,4 +1,4 @@
-# Country Catalog Rules for WooCommerce
+# Yuupee Country Catalog Rules for WooCommerce
 
 Restrict which products (or entire categories) are visible or purchasable
 based on the visitor's country — without adding a second geolocation system
@@ -61,7 +61,7 @@ nothing in the code assumes a specific country pair or store.
 ## Architecture
 
 ```
-country-catalog-rules-for-woocommerce.php              Plugin bootstrap, WooCommerce dependency check, HPOS compat declaration
+yuupee-country-catalog-rules-for-woocommerce.php       Plugin bootstrap, WooCommerce dependency check, HPOS compat declaration
 includes/
   class-ccrw-geolocation.php      Visitor country resolution (wraps WC_Geolocation) + admin preview override
   class-ccrw-rules.php            Resolves the effective rule for a product: product override > product's own category > inherited from an ancestor category > none
